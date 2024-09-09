@@ -1,0 +1,54 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <mat-spinner></mat-spinner>
+</div>
+
+<form class="form-container" [formGroup]="bookform" (ngSubmit)="addOrUpdateBook()" novalidate>
+  <div class="form-group">
+    <label for="validationCustom01" class="form-label">Title</label>
+    <input type="text" class="form-control" formControlName="Title"  required>
+
+    <div *ngIf="bookform.get('Title')?.invalid && bookform.get('Title')?.touched">
+      <div *ngIf="bookform.get('Title')?.errors?.['required']">
+       Title is required
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="validationCustom02" class="form-label">Author</label>
+    <input type="text" class="form-control" formControlName="Author"  required>
+
+    <div *ngIf="bookform.get('Author')?.invalid && bookform.get('Author')?.touched">
+      <div *ngIf="bookform.get('Author')?.errors?.['required']">
+       Author is required
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="validationCustomUsername" class="form-label">Description</label>
+    <div class="input-group has-validation">
+      <input type="text" class="form-control" formControlName="Description"   required>
+    </div>
+    <div *ngIf="bookform.get('Description')?.invalid && bookform.get('Description')?.touched">
+      <div *ngIf="bookform.get('Description')?.errors?.['required']">
+       Description is required
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="imageUpload" class="form-label">Upload Image</label>
+    <input type="file"  id="imageUpload" (change)="onslected($event)">
+    <div *ngIf="bookform.get('imageUrl')?.invalid && bookform.get('imageUrl')?.touched">
+      <div *ngIf="bookform.get('imageUrl')?.errors?.['required']">
+        Image is required
+      </div>
+      </div>
+
+  </div>
+
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit" [disabled]="bookform.invalid ">{{isEditing ? 'UPDATE' : 'SUBMIT'}}</button>
+  </div>
+</form>

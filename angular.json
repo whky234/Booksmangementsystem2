@@ -31,15 +31,21 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
             "styles": [
-              "src/styles.css"
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+
+            ]
           },
           "configurations": {
             "production": {
@@ -95,6 +101,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -102,5 +109,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "ca8a300e-230c-44ab-91d2-e551449f8c9d"
   }
 }

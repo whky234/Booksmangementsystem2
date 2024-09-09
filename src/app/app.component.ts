@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { BooksService } from './SERVICES/books.service';
+import { Book } from './Model/book';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LoadingService } from './SERVICES/loading.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +12,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'booksmanagemensystem';
+  searchResult: any;
+
+constructor(private bookser:BooksService,private sanckBar:MatSnackBar){
+
 }
+book:Book[]=[]
+
+
+}
+

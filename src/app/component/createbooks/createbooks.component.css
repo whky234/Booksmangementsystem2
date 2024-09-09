@@ -1,0 +1,40 @@
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  z-index: 1000;
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Adjust the gap between form fields */
+  max-width: 400px; /* Optional: Limit form width */
+  margin: 0 auto; /* Center form on the page */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin-bottom: 8px; /* Spacing between label and input */
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+button.btn-primary {
+  align-self: flex-start; /* Align button to the start */
+}
+input:focus{
+  border: 2px solid black;
+}
