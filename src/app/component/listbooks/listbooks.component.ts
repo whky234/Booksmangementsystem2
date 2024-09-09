@@ -12,6 +12,7 @@ import { not } from 'rxjs/internal/util/not';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { ConfirmdeleteComponent } from './confirmdelete/confirmdelete.component';
+import { catchError, finalize, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-listbooks',
@@ -30,13 +31,13 @@ export class ListbooksComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild('confirmDeleteContainer',{read:ViewContainerRef}) confirmdeletecontainer!:ViewContainerRef
+  // @ViewChild('confirmDeleteContainer',{read:ViewContainerRef}) confirmdeletecontainer!:ViewContainerRef
 
 isconirm:boolean=false;
   constructor(private booksser:BooksService,private router:Router,
     private dialog:MatDialog,
     private snackbar:MatSnackBar,
-  private factoryresolver:ComponentFactoryResolver){
+  ){
 
   }
 
@@ -62,16 +63,23 @@ this.getbook();
 
   getbook():void{
     this.isLoading=true
-    this.booksser.getbooks().subscribe((res) => {
+    this.booksser.getbooks().pipe(tap((res)=>{
       this.book=res;
       this.dataSource.data=this.book;
-
       console.log(res)
-      this.isLoading=false;
-     }, error => {
-      this.isLoading = false;
-      this.snackbar.open(error.message, 'Close', { duration: 5000 });
-    }
+
+    }),catchError((error)=>{
+      this.booksser.handleError(error)
+
+      return of([]);
+    }),finalize(()=>{
+      this.isLoading=false
+    })).subscribe(() => {
+
+
+
+     }
+
 );
   }
 
@@ -82,42 +90,48 @@ this.getbook();
 
   ondelete(id: number): void {
     this.bookIdToDelete = id;
-    // this.isConfirmVisible = true;
-    this.showconfirmdeletedialog()
+    this.isConfirmVisible = true;
+    // this.showconfirmdeletedialog()
   }
 
   handleConfirmDelete(): void {
     if (this.bookIdToDelete !== null) {
-      this.booksser.deletebook(this.bookIdToDelete).subscribe(
+      this.booksser.deletebook(this.bookIdToDelete).pipe(tap((res)=>{
+        this.snackbar.open('Book deleted successfully', 'Close', { duration: 3000 });
+        this.getbook();
+      }),catchError((error)=>{
+        this.booksser.handleError(error)
+        return of(null)
+
+      }),finalize(()=>{
+        this.isLoading=false
+      })).subscribe(
         () => {
-          this.snackbar.open('Book deleted successfully', 'Close', { duration: 3000 });
-          this.getbook();
+
           this.bookIdToDelete = null;
-        },
-        (error) => {
-          this.snackbar.open(error.message, 'Close', { duration: 5000 });
+          this.isConfirmVisible=false
         }
       );
     }
-    // this.isConfirmVisible = false;
-    this.confirmdeletecontainer.clear()
+    this.isConfirmVisible = false;
+    // this.confirmdeletecontainer.clear()
   }
 
   handleCancelDelete(): void {
-    // this.isConfirmVisible = false;
-    // this.bookIdToDelete = null;
-    this.confirmdeletecontainer.clear()
+    this.isConfirmVisible = false;
+    this.bookIdToDelete = null;
+    // this.confirmdeletecontainer.clear()
   }
 
-  showconfirmdeletedialog(){
-    this.confirmdeletecontainer.clear();
+  // showconfirmdeletedialog(){
+  //   this.confirmdeletecontainer.clear();
 
-    const componentfactory=this.factoryresolver.resolveComponentFactory(ConfirmdeleteComponent);
-    const componentref=this.confirmdeletecontainer.createComponent(componentfactory);
-    componentref.instance.onConfirm=this.handleConfirmDelete.bind(this);
-    componentref.instance.onCancel=this.handleCancelDelete.bind(this);
+  //   const componentfactory=this.factoryresolver.resolveComponentFactory(ConfirmdeleteComponent);
+  //   const componentref=this.confirmdeletecontainer.createComponent(componentfactory);
+  //   componentref.instance.onConfirm=this.handleConfirmDelete.bind(this);
+  //   componentref.instance.onCancel=this.handleCancelDelete.bind(this);
 
-  }
+  // }
 
 
   openImageDialog(imageUrl: string): void {

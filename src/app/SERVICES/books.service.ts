@@ -17,13 +17,13 @@ export class BooksService {
   getbooks() :Observable<Book[]>{
   return this.http.get<Book[]>(`${this.Api_url}/books`).pipe(
     map(data => data || []),
-    catchError(this.handleError)
+    // catchError(this.handleError)
   );
   }
 
   getbookbyID(id:number):Observable<Book>{
    return this.http.get<Book>(`${this.Api_url}/books/${id}`).pipe(
-    catchError(error => this.handleError(error))
+    // catchError(error => this.handleError(error))
   );
 
   }
@@ -43,17 +43,19 @@ export class BooksService {
 
   deletebook(id:number):Observable<void>{
     return this.http.delete<void>(`${this.Api_url}/books/${id}`).pipe(
-      catchError(error => this.handleError(error))
+      // catchError(error => this.handleError(error))
     );
 
   }
 
 
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  public handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Something went wrong, please try again later.';
 
-    if (error.error instanceof ErrorEvent) {
+    if (error.status === 404) {
+      errorMessage = 'The requested resource was not found.';
+    } else if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Client error: ${error.error.message}`;
     } else {
@@ -68,6 +70,7 @@ export class BooksService {
 
     return throwError(() => new Error(errorMessage));
   }
-  
-
 }
+
+
+
